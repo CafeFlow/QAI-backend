@@ -1,5 +1,6 @@
 package com.power.likelion.controller;
 
+import com.power.likelion.common.response.BaseResponse;
 import com.power.likelion.dto.question.QuesReqDto;
 import com.power.likelion.dto.question.QuesResDto;
 import com.power.likelion.service.QuestionService;
@@ -38,8 +39,27 @@ public class QuestionController {
     }
 
     @GetAllQuesRequest
-    @GetMapping("/{page}")
-    public ResponseEntity<?> getAllQuestion(@PathVariable("page") Integer page) throws Exception{
+    @GetMapping(name="page")
+    public ResponseEntity<?> getAllQuestion(@RequestParam("page") Integer page) throws Exception{
         return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestions(page));
     }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getQuestion(@PathVariable("id") Long id) throws Exception{
+        try{
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(BaseResponse.builder()
+                            .result(questionService.getQuestion(id))
+                            .build());
+        }
+        catch(Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponse<>(HttpStatus.NOT_FOUND.value(),e.getMessage()));
+        }
+    }
+
+
 }

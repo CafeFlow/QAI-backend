@@ -49,4 +49,12 @@ public class Member extends AuditingFiled {
     }
 
 
+/**  TODO:나중에 질문한 정보를 내정보에서 확인하는 기능 만들면 만들기
+    public void setQuestions(List<Answer> questions){
+        this.answers=questions;
+        questions.forEach(o->o.);
+    }
+*/
+
+
 }

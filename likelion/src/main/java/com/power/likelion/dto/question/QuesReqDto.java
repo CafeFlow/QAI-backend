@@ -17,14 +17,10 @@ public class QuesReqDto {
     @Schema(description = "내공", example = "100")
     private int point;
 
-    @Schema(description = "닉네임", example = "김부자")
-    private String nickname;
 
-
-    public QuesReqDto(String title, String content, int point, String nickname) {
+    public QuesReqDto(String title, String content, int point) {
         this.title = title;
         this.content = content;
         this.point = point;
-        this.nickname = nickname;
     }
 }
