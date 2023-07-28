@@ -2,8 +2,11 @@ package com.power.likelion.domain.question;
 
 
 import com.power.likelion.common.entity.AuditingFiled;
+import com.power.likelion.common.entity.CheckStatus;
 import com.power.likelion.domain.member.Member;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,6 +16,8 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Builder
 public class Answer extends AuditingFiled {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +26,9 @@ public class Answer extends AuditingFiled {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false,columnDefinition = "integer default 0") // 0이면 채택전 1이면 채택후
-    private int answerCheck;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CheckStatus answerCheck;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
@@ -33,4 +39,5 @@ public class Answer extends AuditingFiled {
     @JoinColumn(name = "questionId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Question question;
+
 }
