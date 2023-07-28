@@ -1,11 +1,15 @@
 package com.power.likelion.dto.question;
 
 import com.power.likelion.common.entity.CheckStatus;
+import com.power.likelion.domain.question.Answer;
 import com.power.likelion.domain.question.Question;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class QuesResDto {
@@ -18,10 +22,11 @@ public class QuesResDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private String nickname;
+    private List<AnswerResDto> answers;
 
     @Builder
     public QuesResDto(Question question) {
-        this.questionId=question.getId();
+        this.questionId = question.getId();
         this.title = question.getTitle();
         this.content = question.getContent();
         this.point = question.getPoint();
@@ -29,6 +34,9 @@ public class QuesResDto {
         this.viewCount = question.getViewCount();
         this.createdAt = question.getCreatedAt();
         this.modifiedAt = question.getModifiedAt();
-        this.nickname=question.getMember().getNickname();
+        this.nickname = question.getMember().getNickname();
+    }
+    public void setAnswers(List<AnswerResDto> answer){
+        this.answers=answer;
     }
 }
