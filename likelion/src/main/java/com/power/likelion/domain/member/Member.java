@@ -33,11 +33,6 @@ public class Member extends AuditingFiled {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "member")
-    private List<Question> questions = new ArrayList<Question>();
-
-    @OneToMany(mappedBy = "member")
-    private List<Answer> answers=new ArrayList<Answer>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
