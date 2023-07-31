@@ -1,5 +1,6 @@
 package com.power.likelion.controller;
 
+import com.power.likelion.common.exception.AuthorMismatchException;
 import com.power.likelion.common.response.BaseResponse;
 import com.power.likelion.dto.question.QuesReqDto;
 import com.power.likelion.dto.question.QuesResDto;
@@ -66,17 +67,22 @@ public class QuestionController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateQues(@PathVariable("id") Long id, @RequestBody QuesUpdateDto quesUpdateDto){
         try{
-            questionService.updateQuestion(id,quesUpdateDto);
+            QuesResDto quesResDto=questionService.updateQuestion(id,quesUpdateDto);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(BaseResponse.builder()
-                            .result(questionService.getQuestion(id))
+                            .result(quesResDto)
                             .build());
         }
-        catch (Exception e){
+        catch (NullPointerException e){
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new BaseResponse<>(HttpStatus.NOT_FOUND.value(),e.getMessage()));
+        }
+        catch (AuthorMismatchException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new BaseResponse<>(HttpStatus.BAD_REQUEST.value(),e.getMessage()));
         }
     }
 

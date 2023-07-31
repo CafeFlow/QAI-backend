@@ -1,11 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-
     username: ahc700
     password: ahc0209@
     url: jdbc:mysql://localhost:3306/team_power
-
   jpa:
     defer-datasource-initialization: true
     hibernate:

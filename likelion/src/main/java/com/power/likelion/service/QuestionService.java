@@ -2,6 +2,7 @@ package com.power.likelion.service;
 
 
 import com.power.likelion.common.entity.CheckStatus;
+import com.power.likelion.common.exception.AuthorMismatchException;
 import com.power.likelion.domain.member.Member;
 import com.power.likelion.domain.question.Answer;
 import com.power.likelion.domain.question.Question;
@@ -18,8 +19,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 
@@ -70,10 +73,16 @@ public class QuestionService {
     /** 게시글 하나를 읽어갈때 댓글과 함께 읽어감 */
     @Transactional(readOnly = true)
     public QuesResDto getQuestion(Long id)throws Exception {
+
+
+        Question question=questionRepository.findById(id).orElseThrow(() -> new Exception("질문이 존재하지 않습니다."));
+
+
         QuesResDto quesResDto = QuesResDto.builder()
-                .question(questionRepository.findById(id)
-                        .orElseThrow(() -> new Exception("유저가 존재하지 않습니다.")))
+                .question(question)
                 .build();
+
+
 
         quesResDto.setAnswers(answerSerivce.getAnswers(id));
 
@@ -81,10 +90,23 @@ public class QuestionService {
     }
 
     @Transactional
-    public void updateQuestion(Long id,QuesUpdateDto quesUpdateDto)throws Exception{
+    public QuesResDto updateQuestion(Long id,QuesUpdateDto quesUpdateDto)throws NullPointerException,AuthorMismatchException{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+
         Question question=questionRepository.findById(id)
-                .orElseThrow(()->new Exception("질문이 존재하지 않습니다."));
+                .orElseThrow(()->new NullPointerException("질문이 존재하지 않습니다."));
+
+        String writer = question.getMember().getEmail();
+
+
+        if(!writer.equals(name)){
+            throw new AuthorMismatchException("동일한 작성자가 아닙니다.");
+        }
+
         question.update(quesUpdateDto);
+
+        return QuesResDto.builder().question(question).build();
     }
 
     @Transactional
