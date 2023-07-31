@@ -4,6 +4,7 @@ package com.power.likelion.domain.question;
 import com.power.likelion.common.entity.AuditingFiled;
 import com.power.likelion.common.entity.CheckStatus;
 import com.power.likelion.domain.member.Member;
+import com.power.likelion.dto.question.AnswerReqDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,4 +41,8 @@ public class Answer extends AuditingFiled {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Question question;
 
+
+    public void update(AnswerReqDto answerReqDto){
+        this.content=answerReqDto.getContent();
+    }
 }
