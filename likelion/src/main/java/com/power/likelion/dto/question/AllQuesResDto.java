@@ -15,7 +15,7 @@ public class AllQuesResDto {
     private String title;
     private String content;
     private int viewCount;
-    private String nickname;
+    private String createdBy;
     private String checkStatus;
     private int point;
     private LocalDateTime createdAt;
@@ -26,7 +26,7 @@ public class AllQuesResDto {
         this.title = question.getTitle();
         this.content = question.getContent();
         this.viewCount = question.getViewCount();
-        this.nickname = question.getMember().getNickname();
+        this.createdBy = question.getMember().getNickname();
         this.point = question.getPoint();
         this.createdAt = question.getCreatedAt();
         this.checkStatus=question.getQuestionCheck().getDescription();

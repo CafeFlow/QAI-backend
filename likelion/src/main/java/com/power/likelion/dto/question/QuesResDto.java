@@ -21,7 +21,7 @@ public class QuesResDto {
     private int viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private String nickname;
+    private String createdBy;
     private List<AnswerResDto> answers;
 
     @Builder
@@ -34,7 +34,7 @@ public class QuesResDto {
         this.viewCount = question.getViewCount();
         this.createdAt = question.getCreatedAt();
         this.modifiedAt = question.getModifiedAt();
-        this.nickname = question.getMember().getNickname();
+        this.createdBy = question.getMember().getNickname();
     }
     public void setAnswers(List<AnswerResDto> answer){
         this.answers=answer;

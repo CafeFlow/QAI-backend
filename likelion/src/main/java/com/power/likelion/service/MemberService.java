@@ -38,7 +38,9 @@ public class MemberService {
                 .password(encoder.encode(signUpReqDto.getPassword()))
                 .nickname(signUpReqDto.getNickname())
                 .age(signUpReqDto.getAge())
+                .point(100)
                 .build();
+
         member.setRoles(Collections.singletonList(Authority.builder().name("ROLE_USER").build()));
 
         try{
@@ -66,6 +68,7 @@ public class MemberService {
                 .email(member.getEmail())
                 .age(member.getAge())
                 .jwtToken(jwtProvider.createToken(member.getEmail(), member.getRoles()))
+                .point(member.getPoint())
                 .build();
     }
 
@@ -78,7 +81,32 @@ public class MemberService {
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .age(member.getAge())
+                .point(member.getPoint())
                 .build();
     }
 
+    @Transactional
+    public void createAdmin(SignUpReqDto signUpReqDto) throws IllegalAccessException{
+
+
+        Optional<Member> optionalUser = memberRepository.findByEmail(signUpReqDto.getEmail());
+        if(optionalUser.isPresent()){
+            throw new IllegalAccessException("이미 존재하는 admin 입니다.");
+        }
+
+        Member member = Member.builder()
+                .email(signUpReqDto.getEmail())
+                .password(encoder.encode(signUpReqDto.getPassword()))
+                .nickname(signUpReqDto.getNickname())
+                .age(signUpReqDto.getAge())
+                .build();
+        member.setRoles(Collections.singletonList(Authority.builder().name("ROLE_ADMIN").build()));
+
+        try{
+            memberRepository.save(member);
+        }
+        catch(Exception e){
+            throw new IllegalAccessException("데이터 베이스 삽입 오류 입니다");
+        }
+    }
 }
