@@ -43,6 +43,12 @@ dependencies {
 
 	//Swagger
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
+
+	//S3 buket
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	//Oauth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {

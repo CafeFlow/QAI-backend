@@ -1,8 +1,6 @@
 package com.power.likelion.domain.member;
 
 import com.power.likelion.common.entity.AuditingFiled;
-import com.power.likelion.domain.question.Answer;
-import com.power.likelion.domain.question.Question;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,7 +19,7 @@ public class Member extends AuditingFiled {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,length = 10)
+    @Column(nullable = true,length = 40)  // TODO 나중에 다시 false
     private String nickname;
 
     @Column(nullable = false)
@@ -30,9 +28,15 @@ public class Member extends AuditingFiled {
     @Column(nullable=false, length=50)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true) // TODO 나중에 다시 false
     private String password;
 
+
+    @Column(nullable = false)
+    private int point;
+
+    @Column(nullable = true)
+    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
 
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
@@ -42,14 +46,15 @@ public class Member extends AuditingFiled {
         this.roles = role;
         role.forEach(o -> o.setMember(this));
     }
-
-
-/**  TODO:나중에 질문한 정보를 내정보에서 확인하는 기능 만들면 만들기
-    public void setQuestions(List<Answer> questions){
-        this.answers=questions;
-        questions.forEach(o->o.);
+    public void minusPoint(int point){
+        this.point=this.point-point;
     }
-*/
+    public void plusPoint(int point){
+        this.point=this.point+point;
+
+    }
+
+
 
 
 }

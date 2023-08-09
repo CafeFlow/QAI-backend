@@ -16,7 +16,6 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
 public class Question extends AuditingFiled {
     @Id
@@ -48,9 +47,14 @@ public class Question extends AuditingFiled {
     @OneToMany(mappedBy = "question")
     private List<Answer> answers=new ArrayList<Answer>();
 
-    public void setAnswers(List<Answer> answers){
-        this.answers.clear();
-        this.answers.addAll(answers);
+    @Builder
+    public Question(String title, String content, int point, int viewCount, Member member, CheckStatus questionCheck) {
+        this.title = title;
+        this.content = content;
+        this.point = point;
+        this.viewCount = viewCount;
+        this.member = member;
+        this.questionCheck = questionCheck;
     }
 
     public void update(QuesUpdateDto quesUpdateDto){
@@ -59,4 +63,11 @@ public class Question extends AuditingFiled {
         this.point=quesUpdateDto.getPoint();
     }
 
+    public void updateView(){
+        this.viewCount=this.viewCount+1;
+    }
+
+    public void changeCheck(){
+        this.questionCheck=CheckStatus.True;
+    }
 }

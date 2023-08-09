@@ -1,5 +1,6 @@
 package com.power.likelion.controller;
 
+import com.power.likelion.common.response.BaseResponse;
 import com.power.likelion.common.response.SignStatus;
 import com.power.likelion.dto.login.GetInfoRes;
 import com.power.likelion.dto.login.LoginDto;
@@ -92,6 +93,28 @@ public class MemberController {
     @GetMapping("/get-info")
     public ResponseEntity<GetInfoRes> getUser(@RequestParam String email) throws Exception {
         return new ResponseEntity<>( memberService.getMember(email), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/admin/sign-up")
+    public ResponseEntity<?> createAdmin(@RequestBody SignUpReqDto signUpReqDto){
+        try{
+            memberService.createAdmin(signUpReqDto);
+            return ResponseEntity
+                    .ok(SingUpResDto.builder()
+                            .data(signUpReqDto.getEmail())
+                            .message("회원가입에 성공하였습니다")
+                            .status(SignStatus.OK)
+                            .build()
+                    );
+        }
+        catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+
+
+
     }
 
 

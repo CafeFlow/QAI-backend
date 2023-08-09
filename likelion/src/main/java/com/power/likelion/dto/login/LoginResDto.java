@@ -16,13 +16,16 @@ public class LoginResDto {
     private String email;
     private int age;
     private String jwtToken;
+    private int point;
 
-    public LoginResDto(SignStatus status, String message, String nickname, String email,int age, String jwtToken) {
+
+    public LoginResDto(SignStatus status, String message, String nickname, String email,int age, String jwtToken,int point) {
         this.status = status;
         this.message = message;
         this.nickname = nickname;
         this.email = email;
         this.age=age;
         this.jwtToken = jwtToken;
+        this.point=point;
     }
 }
