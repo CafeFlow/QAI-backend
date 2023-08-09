@@ -11,15 +11,17 @@ public class GetInfoRes {
     private String email;
     private String nickname;
     private int age;
+    private int point;
 
 
     @Builder
-    public GetInfoRes(SignStatus status, String message, String email, String nickname, int age) {
+    public GetInfoRes(SignStatus status, String message, String email, String nickname, int age,int point) {
         this.status = status;
         this.message = message;
         this.email = email;
         this.nickname = nickname;
         this.age = age;
+        this.point=point;
     }
 
 

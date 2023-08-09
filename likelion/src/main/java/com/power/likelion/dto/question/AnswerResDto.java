@@ -11,7 +11,7 @@ public class AnswerResDto {
     private Long id;
     private String content;
     private String answerCheck;
-    private String nickname;
+    private String createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -20,7 +20,7 @@ public class AnswerResDto {
         this.id = answer.getId();
         this.content = answer.getContent();
         this.answerCheck = answer.getAnswerCheck().getDescription();
-        this.nickname = answer.getMember().getNickname();
+        this.createdBy = answer.getMember().getNickname();
         this.createdAt = answer.getCreatedAt();
         this.modifiedAt = answer.getModifiedAt();
     }

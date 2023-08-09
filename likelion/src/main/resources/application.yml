@@ -1,14 +1,21 @@
 spring:
+
+  # OAuth2
+  profiles:
+    include: oauth
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    #로컬ㅇ
     username: ahc700
     password: ahc0209@
     url: jdbc:mysql://localhost:3306/team_power
+
   jpa:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -25,7 +32,27 @@ spring:
       display-request-duration: true
       operations-sorter: alph
 
+
+
+  servlet:
+    multipart:
+      max-file-size: 10MB #파일 하나 당 최대 size
+      max-request-size: 20MB # 요청 당 최대 size
+
 # jwt.secret.key
 jwt:
   secret:
     key: aFnm39JIuZzMJ0wQnK9u6rL2Zx1R1BOw
+
+cloud:
+  aws:
+    stack:
+      auto: false
+    s3:
+      endpoint:
+      bucket:
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key:
+      secret-key:

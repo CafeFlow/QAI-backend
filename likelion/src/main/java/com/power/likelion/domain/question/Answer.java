@@ -45,4 +45,7 @@ public class Answer extends AuditingFiled {
     public void update(AnswerReqDto answerReqDto){
         this.content=answerReqDto.getContent();
     }
+    public void changeCheck(){
+        this.answerCheck=CheckStatus.True;
+    }
 }

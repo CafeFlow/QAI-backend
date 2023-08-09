@@ -32,6 +32,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final JwtProvider jwtProvider;
 
     @Bean
@@ -53,9 +54,11 @@ public class SecurityConfig {
                 //API 명세서 관련된 모든 요소들도 모두 승인
                 .antMatchers("/", "/swagger-ui/**", "/v3/**","/swagger-ui.html").permitAll()
                 // 회원가입과 로그인은 모두 승인
-                .antMatchers("/login", "/sign-up").permitAll()   // permitAll()을 하게되면 JWT 필터를 거치지 않고 간다.
+                .antMatchers("/login", "/sign-up","/admin/sign-up").permitAll()   // permitAll()을 하게되면 JWT 필터를 거치지 않고 간다.
                 //질문 하나를 보는건 비회원도 접근가능 but 질문 생성, 삭제, 답변작성 등은 회원만 가능
-                .antMatchers(HttpMethod.GET,"/questions/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/questions","/questions/{id}").permitAll()
+
+                .antMatchers(HttpMethod.GET,"/boards","/boards/{id}").permitAll()
 
                 .antMatchers("/questions/create").hasRole("USER")
                 // /admin으로 시작하는 요청은 ADMIN 권한이 있는 유저에게만 허용
@@ -63,11 +66,18 @@ public class SecurityConfig {
                 // /user 로 시작하는 요청은 USER 권한이 있는 유저에게만 허용
                 .antMatchers("/user/**").hasRole("USER")
 
-                .anyRequest().authenticated() // 위에서 설정한 API를 제외하고는 모두 JWT 필터를 거친다는 소리 TODO 나중에 바꿔야 함
+                .antMatchers("/login/oauth2/**").permitAll()
 
-                .and()
-                // JWT 인증 필터 적용
+                .anyRequest().authenticated(); // 위에서 설정한 API를 제외하고는 모두 JWT 필터를 거친다는 소리 TODO 나중에 바꿔야 함
+
+
+        /** 아래 내용은 인증과 권한을 확인하는 단계이다. 일반 회원가입으로 로그인을 진행하면 로그인시 제공한 JWT 토큰을 확인하여 아래 과정이 일어나고
+         *  OAuth2 로그인시 SuccessHandler에서 발급한 토큰을 이용하여 아래 작용이 일어나게 된다. */
+        http
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+
+                // JWT 인증 필터 적용
+
                 // 에러 핸들링
                 .exceptionHandling()
                 .accessDeniedHandler(new AccessDeniedHandler() { // 권한이 없는경우 처리 즉 인증은 됬지만 role의 권한이 없는 것
@@ -90,6 +100,7 @@ public class SecurityConfig {
                         response.getWriter().write("인증되지 않은 사용자입니다.");
                     }
                 });
+
 
         return http.build();
     }
@@ -128,4 +139,23 @@ public class SecurityConfig {
 // TODO 나중에 해야 할것 : CORS 공부 심화적으로 하기, Spring Security 다시한번 제대로 공부하기
 
 
+/**
+ * 사용자가 웹 애플리케이션의 "OAuth2 제공자와 로그인" 버튼을 클릭합니다.
 
+ 애플리케이션은 사용자를 OAuth2 제공자의 로그인 페이지로 리디렉션합니다.
+
+ 사용자는 OAuth2 제공자의 로그인 페이지에서 자격 증명을 입력하고 제출합니다.
+
+ OAuth2 제공자는 사용자의 자격 증명을 확인하고, 애플리케이션이 특정 사용자 정보(예: 이름, 이메일)에 접근하는 것에 대한 권한을 부여하도록 사용자에게 요청합니다.
+
+ 사용자가 권한을 부여하면, OAuth2 제공자는 인증 코드를 생성하고 애플리케이션의 콜백 URL로 사용자를 리디렉션합니다.
+
+ 애플리케이션은 콜백 URL에서 인증 코드를 받고, 해당 코드를 OAuth2 제공자와 교환하여 액세스 토큰을 받습니다.
+
+ 애플리케이션은 액세스 토큰을 사용하여 OAuth2 제공자의 사용자 정보 엔드포인트에 사용자 정보를 요청합니다.
+
+ 구성에서 지정한 커스텀 사용자 서비스(customOAuth2UserService)가 OAuth2 제공자로부터 받은 사용자 정보를 처리합니다. 여기서는 사용자 세부 정보를 애플리케이션의 사용자 모델에 매핑하거나 사용자 정의 로직을 수행할 수 있습니다.
+
+ 모든 과정이 원활하게 진행된다면, 사용자는 로그인된 것으로 간주되며 성공 처리기(oAuth2LoginSuccessHandler)가 호출됩니다. 성공 처리기는 사용자를 대시보드나 특정 페이지로 리디렉션하는 등의 추가적인 작업을 수행할 수 있습니다.
+
+ 만약 과정 중에 오류가 발생한다면, 실패 처리기(oAuth2LoginFailureHandler)가 호출되어 오류를 처리하고 사용자에게 적절한 피드백을 제공합니다.*/

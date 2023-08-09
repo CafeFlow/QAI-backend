@@ -13,6 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Min;
+import java.util.NoSuchElementException;
+
 
 @Tag(name = "Q&A 생성, 조회, 수정, 삭제", description = "질문을 올리고 수정하고 삭제하고 조회할 수 있다.")
 @RestController
@@ -39,21 +44,61 @@ public class QuestionController {
 
     }
 
+
+
+
+    //TODO:  수정해야됨
+
+    /** 프론트에서 받아와야할 데이터 = 현재 페이지번호(page),  화면 하단에 출력할 페이지의 크기(pageSize)
+     *  검색 키워드(searchKeywrod), 검색 유형(SearchType)
+     * */
+
+    /** 난 프론트에서 현재 페이지 번호와 한페이지당 size만 받아오면 현재 페이지의 size만큼의 게시글을 보여주고 총 데이터, 페이지 개수를 프론트에게 넘
+     * 길 예정 */
     @GetAllQuesRequest
-    @GetMapping(name="page")
-    public ResponseEntity<?> getAllQuestion(@RequestParam("page") Integer page) throws Exception{
-        return ResponseEntity.status(HttpStatus.OK).body(questionService.getQuestions(page));
+    @GetMapping()
+    public ResponseEntity<?> searchQuestion(@RequestParam(name = "page") @Min(0) Integer page,
+                                            @RequestParam(name= "size") @Min(0) Integer size,
+                                            @RequestParam(required = false,name = "option") String option,
+                                            @RequestParam(required = false,name = "searchKeyword") String searchKeyword)
+    {
+        if(searchKeyword==null){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(BaseResponse.builder()
+                            .result(questionService.getQuestions(page,size))
+                            .build()
+                    );
+        }
+
+        try{
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(BaseResponse.builder()
+                            .result(questionService.searchQuestions(page,size,searchKeyword,option))
+                            .build());
+        }
+
+        catch(NullPointerException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponse<>(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
+        catch(NoSuchElementException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponse<>(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
     }
 
-
+    /** 글 하나 상세조회에서 조회수 증가 로직을 구현해야함  */
     @GetQuesApiRequest
     @GetMapping("/{id}")
-    public ResponseEntity<?> getQuestion(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<?> getQuestion(@PathVariable("id") Long id,
+                                         HttpServletRequest request,
+                                         HttpServletResponse response
+                                         ) throws Exception{
         try{
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(BaseResponse.builder()
-                            .result(questionService.getQuestion(id))
+                            .result(questionService.getQuestion(id,request,response))
                             .build());
         }
         catch(Exception e){

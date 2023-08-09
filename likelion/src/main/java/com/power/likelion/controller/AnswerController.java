@@ -4,25 +4,23 @@ import com.power.likelion.common.exception.AuthorMismatchException;
 import com.power.likelion.common.response.BaseResponse;
 import com.power.likelion.dto.question.AnswerReqDto;
 import com.power.likelion.service.AnswerSerivce;
-import com.power.likelion.utils.swagger.answer.CreateAnswerApiReq;
-import com.power.likelion.utils.swagger.answer.DeleteAnswerApiReq;
-import com.power.likelion.utils.swagger.answer.UpdateAnswerApiReq;
+import com.power.likelion.utils.swagger.answer.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/questions")
-@Tag(name = "답변 생성, 수정, 삭제", description = "답변을 생성하고 생성한 답변을 수정하고 삭제한다.")
+@Tag(name = "답변 생성, 수정, 삭제, 채택", description = "답변 CRUD + 채택기능")
 public class AnswerController {
 
     private final AnswerSerivce answerSerivce;
 
     @CreateAnswerApiReq
-    @PostMapping("/{id}")
+    @PostMapping("/answer/{id}")
     public ResponseEntity<?> createAnswer(@PathVariable("id")Long id, @RequestBody AnswerReqDto answerReqDto){
         try{
             return ResponseEntity
@@ -72,6 +70,24 @@ public class AnswerController {
         catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new BaseResponse<>(HttpStatus.NOT_FOUND.value(),e.getMessage()));
+        }
+
+    }
+
+    /** 채택 기능 구현*/
+    @CheckAnswerApiReq
+    @CheckAnswerApiRes
+    @PostMapping("/answer/check")
+    public ResponseEntity<?> answerCheck(@RequestParam("id") Long id){
+        try{
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(BaseResponse.builder()
+                            .result(answerSerivce.answerCheck(id))
+                            .build());
+        }
+        catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
         }
 
     }
