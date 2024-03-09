@@ -23,8 +23,4 @@
 3. Swagger io 를 이용해 협업 API 명세서 작성
 4. Naver Cloud Object Storage 와 aws S3 디펜던시를 이용한 프로필 이미지 및 게시글 이미지 구현
 5. KakaoPay Api 를 이용한 결제 서비스 구현
-6. 
-
-
-### 기능 설명
 
